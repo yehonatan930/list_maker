@@ -1,3 +1,4 @@
+import os
 import re
 
 
@@ -7,6 +8,10 @@ def bold(string):
 
 def un_bold(string):
     return string.replace("\033[1m", "").replace("\033[0m", "")
+
+
+def red(string):
+    return '\033[91m' + string + '\033[0m'
 
 
 def get_number_from_line(line, result_index=0):
@@ -22,4 +27,5 @@ def clean_string(string):
 
 
 def is_path_a_good_episode(episode_path):
-    return episode_path.endswith((".mkv", ".avi", ".mp4")) and ".unwanted" not in episode_path
+    return os.path.isfile(episode_path) and episode_path.endswith(
+        (".mkv", ".avi", ".mp4")) and ".unwanted" not in episode_path

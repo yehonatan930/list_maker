@@ -39,7 +39,7 @@ def get_current_appender(ep_rounds_line_index=6, current_appender_line_index=9):
         return last_list_ep_rounds_amount + get_number_from_line(latest_log[current_appender_line_index])
 
 
-def get_oldest_log(show):
+def get_oldest_log_with_show(show):
     global LOGS_FOLDER
     for log_path in sorted(glob.glob(fr"{LOGS_FOLDER}\*"), key=os.path.getctime):
         with open(log_path, mode="r", encoding="utf-8") as log_file:

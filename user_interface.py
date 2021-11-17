@@ -1,4 +1,4 @@
-from text_util import bold
+from text_util import bold, red
 
 
 def print_start_text():
@@ -64,9 +64,8 @@ def print_log(log):
 
 
 def print_ep_num_error(ep_path, ep_indexes):
-    print(bold(f"problem with: {ep_path}\nep_indexes: {ep_indexes}"))
+    print(bold(red(f"problem with: {ep_path}\nep_indexes: {ep_indexes}")))
 
 
 def print_no_ep_error(folder_path):
-    print(bold(f"Error in {folder_path}"))
-
+    print(bold(red(f"First episodes not found in {folder_path}")))

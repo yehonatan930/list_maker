@@ -1,8 +1,8 @@
-import os
 import re
 import sys
 
-from files_util import get_oldest_log
+from files_util import get_oldest_log_with_show
+from shows_util import get_good_episodes_filenames
 from text_util import get_number_from_line
 from user_interface import print_no_ep_error
 
@@ -25,7 +25,7 @@ class Show:
         self.list_length = len(self.episodes_paths)
 
     def find_show_ep_number_indexes(self):
-        filenames_in_folder = os.listdir(self.dir_path)
+        filenames_in_folder = get_good_episodes_filenames(self.dir_path)
 
         try:
             first_filename = filenames_in_folder[0]
@@ -36,7 +36,8 @@ class Show:
 
         for num_in_first, num_in_second in zip(re.finditer(r'\d+', first_filename),
                                                re.finditer(r'\d+', second_filename)):
-            if (num_in_first.group() == "01" and num_in_second.group() == "02") or (
+            if (num_in_first.group() == "1" and num_in_second.group() == "2") or (
+                    num_in_first.group() == "01" and num_in_second.group() == "02") or (
                     num_in_first.group() == "001" and num_in_second.group() == "002"):
                 self.ep_num_indexes = {"start_index": num_in_first.start(),
                                        "end_index": num_in_first.end()}
@@ -44,7 +45,6 @@ class Show:
     def find_show_base_number(self, current_appender, current_appender_line_index=9):
         # base_number + current_appender = starting episode
         try:
-            oldest_log_with_show_appender = get_oldest_log(self)[current_appender_line_index]
-            self.base_number = 0 - get_number_from_line(oldest_log_with_show_appender)
+            self.base_number = 0 - get_number_from_line(get_oldest_log_with_show(self)[current_appender_line_index])
         except (AttributeError, TypeError):
             self.base_number = 0 - current_appender

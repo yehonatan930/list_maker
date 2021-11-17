@@ -6,7 +6,6 @@ from show import Show
 from text_util import is_path_a_good_episode, clean_string
 from user_interface import get_chosen_subdirectory, print_info_messages, print_ep_num_error
 
-
 SHOWS_FOLDER = r"D:\כרגע"
 
 
@@ -16,7 +15,7 @@ def find_ep_number(show, ep_path):
 
     try:
         return int(name[ep_indexes["start_index"]:ep_indexes["end_index"]])
-    except (ValueError, TypeError):
+    except (ValueError, TypeError, KeyError):
         print_ep_num_error(ep_path, ep_indexes)
         sys.exit()
 
@@ -28,7 +27,8 @@ def get_directories_for_shows():
     for subdirectory_path in sorted(glob.glob(fr"{SHOWS_FOLDER}\*"), key=os.path.getctime):
         sub_subdirectories_paths = [os.path.join(subdirectory_path, folder_name) for folder_name in
                                     os.listdir(subdirectory_path) if
-                                    os.path.isdir(os.path.join(subdirectory_path, folder_name))]
+                                    os.path.isdir(os.path.join(subdirectory_path, folder_name)) and
+                                    ".unwanted" != folder_name]
 
         print(f"\n{subdirectory_path} options:")
         if sub_subdirectories_paths:
@@ -94,6 +94,15 @@ def make_final_list(shows, minimum_show_length):
         for show in shows:
             final_paths_list.append(show.episodes_paths[ep_round_index])
 
-    print("\nfinalized list created.")
+    print("finalized list created.")
 
     return final_paths_list
+
+
+def get_good_episodes_filenames(dir):
+    filenames_in_folder = []
+    for root, folders, files in os.walk(dir):
+        for file in files:
+            if is_path_a_good_episode(os.path.join(root, file)):
+                filenames_in_folder.append(file)
+    return filenames_in_folder

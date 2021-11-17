@@ -23,10 +23,10 @@ def make_current_log(current_appender, ep_rounds_amount, shows, final_paths_list
 
         episodes_left_table += f"{bold(name)}" \
                                f"{bold(eps_remaining_before_list)}{first_ep_in_list}" \
-                               f"{bold(eps_remaining_after_list)}{last_ep_in_list}"
+                               f"{bold(eps_remaining_after_list)}{last_ep_in_list} "
 
         if show.list_length - ep_rounds_amount == 0:
-            episodes_left_table += bold(f"{' OVER ':+^45}")
+            episodes_left_table += bold(f"{' OVER ':+^43}")
 
         episodes_left_table += '\n'
 
