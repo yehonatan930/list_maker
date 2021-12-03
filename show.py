@@ -1,8 +1,7 @@
 import re
 import sys
 
-from files_util import get_oldest_log_with_show
-from shows_util import get_good_episodes_filenames
+from files_util import get_oldest_log_with_show, get_good_episodes_filenames
 from text_util import get_number_from_line
 from user_interface import print_no_ep_error
 

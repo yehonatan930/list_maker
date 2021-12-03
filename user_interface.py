@@ -38,10 +38,10 @@ def get_chosen_subdirectory(sub_subdirectories_paths):
         print(f"\t{index + 1}. {directory}")
 
     chosen_index = int(input("choose by number: "))
-    if chosen_index != 0:
-        chosen_subdir = sub_subdirectories_paths[chosen_index - 1]
+    print("\n")
 
-        return chosen_subdir
+    if chosen_index != 0:
+        return sub_subdirectories_paths[chosen_index - 1]
 
 
 def print_info_messages(message_type, show_name):

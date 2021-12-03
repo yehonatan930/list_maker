@@ -2,11 +2,12 @@ import glob
 import os
 import sys
 
+from files_util import get_good_folders_paths, is_path_a_good_episode
 from show import Show
-from text_util import is_path_a_good_episode, clean_string
+from text_util import clean_string
 from user_interface import get_chosen_subdirectory, print_info_messages, print_ep_num_error
 
-SHOWS_FOLDER = r"D:\כרגע"
+ALL_SHOWS_FOLDER = r"D:\כרגע"
 
 
 def find_ep_number(show, ep_path):
@@ -21,25 +22,20 @@ def find_ep_number(show, ep_path):
 
 
 def get_directories_for_shows():
-    global SHOWS_FOLDER
+    global ALL_SHOWS_FOLDER
     directories = []
 
-    for subdirectory_path in sorted(glob.glob(fr"{SHOWS_FOLDER}\*"), key=os.path.getctime):
-        sub_subdirectories_paths = [os.path.join(subdirectory_path, folder_name) for folder_name in
-                                    os.listdir(subdirectory_path) if
-                                    os.path.isdir(os.path.join(subdirectory_path, folder_name)) and
-                                    ".unwanted" != folder_name]
+    for show_dir in sorted(glob.glob(fr"{ALL_SHOWS_FOLDER}\*"), key=os.path.getctime):  # old to new
+        inner_show_dirs = get_good_folders_paths(show_dir)
 
-        print(f"\n{subdirectory_path} options:")
-        if sub_subdirectories_paths:
-            chosen_show_directory = get_chosen_subdirectory(sub_subdirectories_paths)
+        print(f"\n{show_dir} options:")
+        if inner_show_dirs:
+            chosen_show_directory = get_chosen_subdirectory(inner_show_dirs)
         else:
-            chosen_show_directory = get_chosen_subdirectory([subdirectory_path])
+            chosen_show_directory = get_chosen_subdirectory([show_dir])
 
         if chosen_show_directory:
             directories.append(chosen_show_directory)
-
-    print("\n")
 
     return directories
 
@@ -70,19 +66,23 @@ def generate_shows(current_appender):
 
 
 def find_show_name(show_folder_path):
-    global SHOWS_FOLDER
+    global ALL_SHOWS_FOLDER
 
     parent_folder = os.path.dirname(show_folder_path)
-    if parent_folder == SHOWS_FOLDER:
+    if parent_folder == ALL_SHOWS_FOLDER:
         show_folder_name = os.path.basename(show_folder_path)
         appendix = ""
     else:
         show_folder_name = os.path.basename(parent_folder)
         appendix = str(os.listdir(parent_folder).index(os.path.basename(show_folder_path)) + 1)
 
-    clean_folder_name = clean_string(show_folder_name)
-
-    show_name = [name_part for name_part in clean_folder_name.split(" ") if name_part != ''][0].lower()
+    function_words = ['', 'the', 'a', 'an', 'he', 'him', 'she', 'her', 'I', 'my', 'mine', 'your', 'you', 'and', 'that',
+                      'this', 'they', 'is', 'am', 'are', 'when', 'while', 'no', 'not', 'nor', 'as', 'or', 'of', 'at',
+                      'in', 'without', 'between', 'have', 'has', 'got', 'do', 'but', 'if', 'then', 'well', 'however',
+                      'would', 'could', 'should', 'yes', 'no', 'okay']
+    show_name = [name_part
+                 for name_part in clean_string(show_folder_name).lower().split(" ")
+                 if name_part not in function_words][0]
 
     return show_name + appendix
 
@@ -97,12 +97,3 @@ def make_final_list(shows, minimum_show_length):
     print("finalized list created.")
 
     return final_paths_list
-
-
-def get_good_episodes_filenames(dir):
-    filenames_in_folder = []
-    for root, folders, files in os.walk(dir):
-        for file in files:
-            if is_path_a_good_episode(os.path.join(root, file)):
-                filenames_in_folder.append(file)
-    return filenames_in_folder
