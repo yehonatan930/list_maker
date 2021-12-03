@@ -10,6 +10,12 @@ from user_interface import print_start_text, print_log
 warnings.filterwarnings('ignore', category=FutureWarning)
 
 
+# todo: add special possbiblity
+# todo: pre scan folder
+# todo: add alerting before running
+# todo: add saving shows in list
+# todo: add gui
+
 def run():
     print_start_text()
 
