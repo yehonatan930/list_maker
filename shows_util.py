@@ -8,17 +8,21 @@ from text_util import clean_string
 from user_interface import get_chosen_subdirectory, print_info_messages, print_ep_num_error
 
 ALL_SHOWS_FOLDER = r"D:\כרגע"
+SPECIAL_SHOWS = ['boruto']
 
 
 def find_ep_number(show, ep_path):
-    ep_indexes = show.ep_num_indexes
     name = os.path.basename(ep_path)
+    if show.is_special_series:
+        return os.listdir(show.dir_path).index(name) + 1
+    else:
+        ep_indexes = show.ep_num_indexes
 
-    try:
-        return int(name[ep_indexes["start_index"]:ep_indexes["end_index"]])
-    except (ValueError, TypeError, KeyError):
-        print_ep_num_error(ep_path, ep_indexes)
-        sys.exit()
+        try:
+            return int(name[ep_indexes["start_index"]:ep_indexes["end_index"]])
+        except (ValueError, TypeError, KeyError):
+            print_ep_num_error(ep_path, ep_indexes)
+            sys.exit()
 
 
 def get_directories_for_shows():
@@ -41,13 +45,15 @@ def get_directories_for_shows():
 
 
 def generate_shows(current_appender):
+    global SPECIAL_SHOWS
     shows = []
 
     for sub_dir_index, sub_dir_path in enumerate(get_directories_for_shows()):
 
         show_episodes_paths = []
+        name = find_show_name(sub_dir_path)
 
-        show = Show(find_show_name(sub_dir_path), sub_dir_path, current_appender)
+        show = Show(name, sub_dir_path, current_appender, name in SPECIAL_SHOWS)
 
         print_info_messages('g', show.name)
 

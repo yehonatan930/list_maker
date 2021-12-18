@@ -7,7 +7,8 @@ from user_interface import print_no_ep_error
 
 
 class Show:
-    def __init__(self, name, dir_path, current_appender):
+    def __init__(self, name, dir_path, current_appender, is_special_series=False):
+        self.is_special_series = is_special_series
         self.name = name
         self.dir_path = dir_path
 
