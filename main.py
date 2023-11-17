@@ -14,6 +14,7 @@ warnings.filterwarnings('ignore', category=FutureWarning)
 # todo: add alerting before running
 # todo: add gui
 
+
 def run():
     print_start_text()
 

@@ -5,16 +5,19 @@ import sys
 from files_util import get_good_folders_paths, is_path_a_good_episode
 from show import Show
 from text_util import clean_string
-from user_interface import get_chosen_subdirectory, print_info_messages, print_ep_num_error
+from user_interface import get_chosen_subdirectory, print_info_messages, print_ep_num_error, \
+    print_show_name_is_weird_error
 
 ALL_SHOWS_FOLDER = r"D:\כרגע"
-SPECIAL_SHOWS = ['boruto']
+SPECIAL_SHOWS = ['boruto', 'bleach', "twelve"]
 
 
 def find_ep_number(show, ep_path):
     name = os.path.basename(ep_path)
     if show.is_special_series:
-        return os.listdir(show.dir_path).index(name) + 1
+        all_paths_in_folder = [os.path.join(
+            show.dir_path, ep_p) for ep_p in os.listdir(show.dir_path)]
+        return list(filter(lambda p: is_path_a_good_episode(p), all_paths_in_folder)).index(ep_path) + 1
     else:
         ep_indexes = show.ep_num_indexes
 
@@ -29,7 +32,8 @@ def get_directories_for_shows():
     global ALL_SHOWS_FOLDER
     directories = []
 
-    for show_dir in sorted(glob.glob(fr"{ALL_SHOWS_FOLDER}\*"), key=os.path.getctime):  # old to new
+    # old to new
+    for show_dir in sorted(glob.glob(fr"{ALL_SHOWS_FOLDER}\*"), key=os.path.getctime):
         inner_show_dirs = get_good_folders_paths(show_dir)
 
         print(f"\n{show_dir} options:")
@@ -53,7 +57,9 @@ def generate_shows(current_appender):
         show_episodes_paths = []
         name = find_show_name(sub_dir_path)
 
-        show = Show(name, sub_dir_path, current_appender, name in SPECIAL_SHOWS)
+        is_special = any([(spsh in name) for spsh in SPECIAL_SHOWS])
+
+        show = Show(name, sub_dir_path, current_appender, is_special)
 
         print_info_messages('g', show.name)
 
@@ -80,17 +86,26 @@ def find_show_name(show_folder_path):
         appendix = ""
     else:
         show_folder_name = os.path.basename(parent_folder)
-        appendix = str(os.listdir(parent_folder).index(os.path.basename(show_folder_path)) + 1)
+        subfolders = [os.path.join(parent_folder, file)
+                      for file in os.listdir(parent_folder)
+                      if os.path.isdir(os.path.join(parent_folder, file))
+                      and ".unwanted" not in os.path.join(parent_folder, file)]
+
+        appendix = str(subfolders.index(show_folder_path) + 1)
 
     function_words = ['', 'the', 'a', 'an', 'he', 'him', 'she', 'her', 'I', 'my', 'mine', 'your', 'you', 'and', 'that',
                       'this', 'they', 'is', 'am', 'are', 'when', 'while', 'no', 'not', 'nor', 'as', 'or', 'of', 'at',
                       'in', 'without', 'between', 'have', 'has', 'got', 'do', 'but', 'if', 'then', 'well', 'however',
-                      'would', 'could', 'should', 'yes', 'no', 'okay']
-    show_name = [name_part
-                 for name_part in clean_string(show_folder_name).lower().split(" ")
-                 if name_part not in function_words][0]
+                      'would', 'could', 'should', 'yes', 'no', 'to', "from"]
+    try:
+        show_name = [name_part
+                     for name_part in clean_string(show_folder_name).lower().split(" ")
+                     if name_part not in function_words][0]
 
-    return show_name + appendix
+        return show_name + appendix
+    except IndexError:
+        print_show_name_is_weird_error(show_folder_name)
+        sys.exit()
 
 
 def make_final_list(shows, minimum_show_length):

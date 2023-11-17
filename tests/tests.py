@@ -36,6 +36,6 @@ if __name__ == '__main__':
     # print([f.path for f in os.scandir(r"D:\כרגע\[Aeenald] Himouto! Umaru-chan [BDRip 1080p HEVC-10bit Opus]") if f.is_dir()])
     # print(glob.glob(r"D:\כרגע\[Judas] Seraph of the End (Seasons 1-2) [BD 1080p][HEVC x265 10bit][Dual-Audio][Eng-Subs]\*"))
     # print("\n".join(get_directories_for_shows()))
-    a = ['a']
+    a = ['oswalk']
     a.append([])
     print(a)

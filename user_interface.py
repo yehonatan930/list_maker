@@ -69,3 +69,7 @@ def print_ep_num_error(ep_path, ep_indexes):
 
 def print_no_ep_error(folder_path):
     print(bold(red(f"First episodes not found in {folder_path}")))
+
+
+def print_show_name_is_weird_error(show_folder_name):
+    print(bold(red(f"Show's name is weird: {show_folder_name}")))
