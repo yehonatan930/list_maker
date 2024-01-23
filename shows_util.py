@@ -2,27 +2,35 @@ import glob
 import os
 import sys
 
-from files_util import get_good_folders_paths, is_path_a_good_episode
+from files_util import get_good_episodes_filenames, get_good_folders_paths, is_path_a_good_episode
 from show import Show
 from text_util import clean_string
 from user_interface import get_chosen_subdirectory, print_info_messages, print_ep_num_error, \
     print_show_name_is_weird_error
 
 ALL_SHOWS_FOLDER = r"D:\כרגע"
-SPECIAL_SHOWS = ['boruto', 'bleach', "twelve"]
+SPECIAL_SHOWS = ['boruto', 'bleach', "twelve", "one"]
 
 
 def find_ep_number(show, ep_path):
-    name = os.path.basename(ep_path)
+    ep_file_name = os.path.basename(ep_path)
+
     if show.is_special_series:
-        all_paths_in_folder = [os.path.join(
-            show.dir_path, ep_p) for ep_p in os.listdir(show.dir_path)]
-        return list(filter(lambda p: is_path_a_good_episode(p), all_paths_in_folder)).index(ep_path) + 1
+        all_paths_in_folder = get_good_episodes_filenames(show.dir_path)
+        
+        
+        if "one" in show.name.lower(): 
+            all_paths_in_folder.sort(key=lambda x: int(x.split('.E')[1].split('.')[0].split('-')[0]))
+
+            
+        print(all_paths_in_folder)
+        
+        return all_paths_in_folder.index(ep_file_name) + 1
     else:
         ep_indexes = show.ep_num_indexes
 
         try:
-            return int(name[ep_indexes["start_index"]:ep_indexes["end_index"]])
+            return int(ep_file_name[ep_indexes["start_index"]:ep_indexes["end_index"]])
         except (ValueError, TypeError, KeyError):
             print_ep_num_error(ep_path, ep_indexes)
             sys.exit()
@@ -52,25 +60,29 @@ def generate_shows(current_appender):
     global SPECIAL_SHOWS
     shows = []
 
-    for sub_dir_index, sub_dir_path in enumerate(get_directories_for_shows()):
+    for sub_dir_path in get_directories_for_shows():
 
         show_episodes_paths = []
         name = find_show_name(sub_dir_path)
-
         is_special = any([(spsh in name) for spsh in SPECIAL_SHOWS])
 
         show = Show(name, sub_dir_path, current_appender, is_special)
+
+        start_episode = current_appender + show.base_number
 
         print_info_messages('g', show.name)
 
         for root, dirs, files in os.walk(sub_dir_path):
             for filename in files:
                 episode_path = os.path.join(root, filename)
-                start_episode = current_appender + show.base_number
-                if is_path_a_good_episode(episode_path) and find_ep_number(show, episode_path) > start_episode:
-                    show_episodes_paths.append(episode_path)
 
+                if is_path_a_good_episode(episode_path) and \
+                    find_ep_number(show, episode_path) > start_episode:
+                    show_episodes_paths.append(episode_path)
+        
         if show_episodes_paths:
+            if "one" in name.lower(): 
+                show_episodes_paths.sort(key=lambda x: int(x.split('.E')[1].split('.')[0].split('-')[0]))
             show.set_episodes_paths(show_episodes_paths)
             shows.append(show)
 

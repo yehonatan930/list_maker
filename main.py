@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import sys
 import warnings
 from datetime import datetime
 
@@ -28,6 +29,7 @@ def run():
 
     shortest_list_length = min(shows, key=lambda show: show.list_length).list_length
     final_paths_list = make_final_list(shows, shortest_list_length)
+
     final_log = make_current_log(current_appender, shortest_list_length, shows, final_paths_list, current_time,
                                  list_version)
 
