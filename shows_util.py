@@ -1,5 +1,6 @@
 import glob
 import os
+import re
 import sys
 
 from files_util import get_good_episodes_filenames, get_good_folders_paths, is_path_a_good_episode
@@ -9,7 +10,7 @@ from user_interface import get_chosen_subdirectory, print_info_messages, print_e
     print_show_name_is_weird_error
 
 ALL_SHOWS_FOLDER = r"D:\כרגע"
-SPECIAL_SHOWS = ['boruto', 'bleach', "twelve", "one"]
+SPECIAL_SHOWS = ['boruto', 'bleach', "one", "naruto"]
 
 
 def find_ep_number(show, ep_path):
@@ -20,10 +21,7 @@ def find_ep_number(show, ep_path):
         
         
         if "one" in show.name.lower(): 
-            all_paths_in_folder.sort(key=lambda x: int(x.split('.E')[1].split('.')[0].split('-')[0]))
-
-            
-        print(all_paths_in_folder)
+            all_paths_in_folder.sort(key=lambda x: int(re.search(r'\d+', os.path.basename(x)).group()))
         
         return all_paths_in_folder.index(ep_file_name) + 1
     else:
@@ -82,7 +80,7 @@ def generate_shows(current_appender):
         
         if show_episodes_paths:
             if "one" in name.lower(): 
-                show_episodes_paths.sort(key=lambda x: int(x.split('.E')[1].split('.')[0].split('-')[0]))
+                show_episodes_paths.sort(key=lambda x: int(re.search(r'\d+', os.path.basename(x)).group()))
             show.set_episodes_paths(show_episodes_paths)
             shows.append(show)
 
