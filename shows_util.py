@@ -10,7 +10,7 @@ from user_interface import get_chosen_subdirectory, print_info_messages, print_e
     print_show_name_is_weird_error
 
 ALL_SHOWS_FOLDER = r"D:\כרגע"
-SPECIAL_SHOWS = ['boruto', 'bleach', "one", "naruto"]
+SPECIAL_SHOWS = ["one", "naruto", "mobile","hibike"]
 
 
 def find_ep_number(show, ep_path):
