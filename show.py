@@ -36,8 +36,7 @@ class Show:
 
         for num_in_first, num_in_second in zip(re.finditer(r'\d+', first_filename),
                                                re.finditer(r'\d+', second_filename)):
-            if (num_in_first.group() == "1" and num_in_second.group() == "2") or (
-                    num_in_first.group() == "01" and num_in_second.group() == "02") or (
+            if ( num_in_first.group() == "01" and num_in_second.group() == "02") or (
                     num_in_first.group() == "001" and num_in_second.group() == "002") or (
                     num_in_first.group() == "0001" and num_in_second.group() == "0002"):
                 self.ep_num_indexes = {"start_index": num_in_first.start(),
